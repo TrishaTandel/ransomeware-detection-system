@@ -1,60 +1,80 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import api from "@/services/api";
 import ResultCard from "./ResultCard";
 
 export default function FeatureForm() {
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<any>(null);
-  
+  const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async () => {
-    const payload = {
-      features: {
-        handles_nfile: 54,
-        handles_nkey: 23,
-      },
-    };
-    
-
-    const res = await api.post("/predict", payload);
-    setResult(res.data);
-  };
-
-   const handleUpload = async () => {
-    if (!file) return alert("Select file");
+  const handleScan = async () => {
+    if (!file) return alert("Please select a file");
 
     const formData = new FormData();
     formData.append("file", file);
 
     try {
+      setLoading(true);
+
+      const token = localStorage.getItem("token");
+
       const res = await api.post("/scan-file", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
+
       setResult(res.data);
-    } catch {
-      alert("Error scanning file");
+    } catch (err) {
+      console.error(err);
+      alert("Scan failed");
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
-    
-      <div className="bg-white/10 p-6 rounded-xl backdrop-blur border border-white/20">
+    <div className="bg-white/10 p-6 rounded-xl backdrop-blur border border-white/20">
 
       <h2 className="text-xl mb-4 font-semibold">🔍 Scan File</h2>
 
+      {/* Hidden input */}
       <input
         type="file"
+        ref={fileInputRef}
         onChange={(e) => setFile(e.target.files?.[0] || null)}
-        className="mb-4"
+        className="hidden"
       />
 
+      {/* Custom Button */}
+      <div className="flex items-center gap-4 mb-4">
+
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="px-5 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition"
+        >
+          📂 Choose File
+        </button>
+
+        <span className="text-gray-300 text-sm">
+          {file ? file.name : "No file selected"}
+        </span>
+      </div>
+
+      {/* Scan Button */}
       <button
-        onClick={handleUpload}
-        className="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700"
+        onClick={handleScan}
+        disabled={loading}
+        className="bg-blue-600 px-6 py-2 rounded-lg hover:bg-blue-700 transition"
       >
-        Scan
+        {loading ? "Scanning..." : "🚀 Scan File"}
       </button>
+
+      {/* Result */}
       {result && (
         <div className="mt-6 p-4 bg-black/40 rounded-lg">
           <p>
@@ -72,12 +92,6 @@ export default function FeatureForm() {
           <p>Confidence: {result.probability}</p>
         </div>
       )}
-      <button
-        onClick={handleSubmit}
-        className="bg-red-600 text-white px-6 py-2 rounded"
-      >
-        Run Detection
-      </button>
 
       {result && <ResultCard result={result} />}
     </div>

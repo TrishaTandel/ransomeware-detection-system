@@ -4,7 +4,7 @@ import Sidebar from "@/components/Sidebar";
 import FeatureForm from "@/components/FeatureForm";
 import { motion } from "framer-motion";
 import HistoryTable from "@/components/HistoryTable";
-import FileUpload from "@/components/FileUpload";
+
 
 export default function Dashboard() {
   return (
@@ -67,7 +67,7 @@ export default function Dashboard() {
              {/* Upload + Prediction */}
             <FeatureForm />
             
-            <FileUpload />
+            
 
             {/* History Table */}
             <HistoryTable />

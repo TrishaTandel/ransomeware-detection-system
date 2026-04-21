@@ -36,11 +36,20 @@ def extract_features(file_path):
 
         # ✅ Basic PE header features
         features["Machine"] = pe.FILE_HEADER.Machine
-        features["NumberOfSections"] = pe.FILE_HEADER.NumberOfSections
-        features["MajorLinkerVersion"] = pe.OPTIONAL_HEADER.MajorLinkerVersion
-        features["MinorLinkerVersion"] = pe.OPTIONAL_HEADER.MinorLinkerVersion
-        features["SizeOfStackReserve"] = pe.OPTIONAL_HEADER.SizeOfStackReserve
-        features["DllCharacteristics"] = pe.OPTIONAL_HEADER.DllCharacteristics
+        features["DebugSize"]=getattr(pe.OPTIONAL_HEADER, "SizeOfHeapCommit", 0),
+        features["DebugRVA"] =getattr(pe.OPTIONAL_HEADER, "AddressOfEntryPoint", 0),
+        features["MajorImageVersion"]= pe.OPTIONAL_HEADER.MajorImageVersion,
+        features["MajorOSVersion"] =pe.OPTIONAL_HEADER.MajorOperatingSystemVersion,
+        features["ExportRVA"] = pe.OPTIONAL_HEADER.DATA_DIRECTORY[0].VirtualAddress,
+        features["ExportSize"] = pe.OPTIONAL_HEADER.DATA_DIRECTORY[0].Size,
+        features["IatVRA"] = pe.OPTIONAL_HEADER.DATA_DIRECTORY[1].VirtualAddress,
+        features["MajorLinkerVersion"] = pe.OPTIONAL_HEADER.MajorLinkerVersion,
+        features["MinorLinkerVersion"] = pe.OPTIONAL_HEADER.MinorLinkerVersion,
+        features["NumberOfSections"] = pe.FILE_HEADER.NumberOfSections,
+        features["SizeOfStackReserve"] = pe.OPTIONAL_HEADER.SizeOfStackReserve,
+        features["DllCharacteristics"] = pe.OPTIONAL_HEADER.DllCharacteristics,
+        features["ResourceSize"] = pe.OPTIONAL_HEADER.DATA_DIRECTORY[2].Size,
+        features["BitcoinAddresses"] = 0
 
         # ✅ Sections info
         entropy_list = []

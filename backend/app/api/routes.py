@@ -11,6 +11,7 @@ from app.core.database import get_db
 from app.models.prediction import Prediction
 from fastapi import UploadFile, File
 from app.services.feature_extractor import extract_features
+from fastapi import UploadFile, File
 
 router = APIRouter()
 security = HTTPBearer()
@@ -58,39 +59,20 @@ def predict_route(
     )
 
 @router.post("/scan-file")
-def scan_file(
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db),
-    credentials: HTTPAuthorizationCredentials = Depends(security)
-):
-    token = credentials.credentials
+async def scan_file(file: UploadFile = File(...)):
+
+    file_path = f"temp/{file.filename}"
+
+    with open(file_path, "wb") as f:
+        f.write(await file.read())
 
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username = payload["sub"]
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    # read file
-    content = file.file.read()
-
-    # ⚠️ TEMP: dummy features (real extraction next)
-    import numpy as np
-    features = extract_features(content)
+        from app.services.feature_extractor import extract_features
+        features = extract_features(file_path)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid file: {str(e)}")
 
     result = predict(features)
-
-    record = Prediction(
-        username=username,
-        label=result["label"],
-        prediction=result["prediction"],
-        probability=result["probability"],
-        model_version=result["model_version"]
-    )
-
-    db.add(record)
-    db.commit()
-
     return result
 
 @router.get("/health")
