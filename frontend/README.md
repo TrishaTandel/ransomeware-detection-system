@@ -35,3 +35,11 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 uvicorn app.main:app --reload
+user:admin pas:admin123
+
+{
+  "features": {
+    "handles_nfile": 10,
+    "handles_nkey": 5
+  }
+}

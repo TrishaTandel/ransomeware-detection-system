@@ -4,6 +4,7 @@ from jose import jwt
 from app.core.config import SECRET_KEY, ALGORITHM
 
 
+
 # ===============================
 # PASSWORD HASHING (NO PASSLIB)
 # ===============================

@@ -69,11 +69,12 @@ print("\nClassification Report:")
 print(classification_report(y_test, preds))
 
 # save feature order
-feature_names = X.columns.tolist()
+feature_names = list(X.columns)
 
 with open("model/features.json", "w") as f:
     json.dump(feature_names, f)
 joblib.dump(model, "model/model.pkl")
+joblib.dump(feature_names, "model/feature_names.pkl")
 joblib.dump(selector, "model/selector.pkl")
 
 print("Model + selector + features saved")

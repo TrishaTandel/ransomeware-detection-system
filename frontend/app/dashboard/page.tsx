@@ -3,6 +3,8 @@
 import Sidebar from "@/components/Sidebar";
 import FeatureForm from "@/components/FeatureForm";
 import { motion } from "framer-motion";
+import HistoryTable from "@/components/HistoryTable";
+import FileUpload from "@/components/FileUpload";
 
 export default function Dashboard() {
   return (
@@ -28,10 +30,10 @@ export default function Dashboard() {
           <div className="flex justify-between items-center mb-10">
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-red-500 to-blue-500 bg-clip-text text-transparent">
-                🛡️ SOC Detection Dashboard
+                🛡️ Ransomware SOC Dashboard
               </h1>
               <p className="text-gray-400 mt-2">
-                Memory-Based Ransomware Analysis Engine
+                Real-time malware detection & monitoring
               </p>
             </div>
 
@@ -46,7 +48,29 @@ export default function Dashboard() {
 
           {/* Glass Card */}
           <div className="backdrop-blur-xl bg-white/5 border border-white/10 p-8 rounded-2xl shadow-2xl">
+          <div className="grid grid-cols-3 gap-6">
+          <div className="bg-white/10 p-6 rounded-xl backdrop-blur border border-white/20">
+            <h2 className="text-gray-300">Total Scans</h2>
+            <p className="text-2xl font-bold">--</p>
+          </div>
+
+          <div className="bg-white/10 p-6 rounded-xl backdrop-blur border border-white/20">
+            <h2 className="text-gray-300">Malware Detected</h2>
+            <p className="text-2xl font-bold text-red-400">--</p>
+          </div>
+
+          <div className="bg-white/10 p-6 rounded-xl backdrop-blur border border-white/20">
+            <h2 className="text-gray-300">Benign Files</h2>
+            <p className="text-2xl font-bold text-green-400">--</p>
+          </div>
+        </div>
+             {/* Upload + Prediction */}
             <FeatureForm />
+            
+            <FileUpload />
+
+            {/* History Table */}
+            <HistoryTable />
           </div>
         </motion.div>
       </div>
